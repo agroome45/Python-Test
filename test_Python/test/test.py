@@ -1,5 +1,5 @@
   
-m = int(input("Enter Size of maze!!!"))
+m = int(input("Enter Size of maze!!"))
 Mat = []
 for i in range (0,m):
     Mat.append([])
