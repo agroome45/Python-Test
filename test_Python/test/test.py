@@ -1,69 +1,70 @@
 import random
 from random import randint
 
-def create_maze(m,R):
-    matrix=[]
-    for i in range(m):
+def create_maze(dim,p): # creates a maze given dem and p
+    maze=[]
+    for i in range(dim):
         c=[]
-        for j in range(m):
-            rand = randint(0,100)
-            if(i == 0 and j == 0):
+        for j in range(dim):
+            rand = randint(0,100) # calculates the change a state is filled or empty 
+            chance = p * 100 
+            if(i == 0 and j == 0): # stating state at upper left corner
                 j = "S"
-            elif(i == (m-1) and j == (m-1)):
-                j = "E"
-            elif(rand > R):
+            elif(i == (dim-1) and j == (dim-1)): # goal state at lower right corner
+                j = "G"
+            elif(rand > chance):
                 j = "O"
             else:
                 j = "X"
             c.append(j)
-        matrix.append(c)
-    return matrix
+        maze.append(c)
+    return maze
 
-def print_maze(matrix,m):
-    for i in range(m):
-        for j in range(m):
-            print(matrix[i][j],i,j, end="    ")
+def print_maze(maze,dim): #prints out the maze 
+    for i in range(dim):
+        for j in range(dim):
+            print(maze[i][j],end="    ")
         print()
     print()
     
-def DFS(matrix, start_location, end_location, m):
+def DFS(matrix, start_location, end_location, dim): # Uses DFS to determine if one state is reachable from another
     fringe = []
     closed = []
     fringe.append(start_location)
     while(len(fringe) != 0):
-        print(fringe, "fringe")
-        current = fringe.pop()
-        print(current, "current")
+        print(fringe, "fringe") #prints fringe (NOT NEEDED)
+        current = fringe.pop()  #Pops state from fringe and makes current
+        print(current, "current") #prints current state (NOT NEEDED)
         if(current == end_location):
             return True
         else:
             i = current[0]
             j = current[1]
-            if((i + 1) >= 0 and (i + 1) < m ):
-                if(matrix[i+1][j] == "O" or matrix[i+1][j] == "E"):
-                    if(closed.count([i+1,j]) == 0 and fringe.count([i+1,j]) == 0):
+            if((i + 1) >= 0 and (i + 1) < dim ):   # Checks if the following state is in the maze range   
+                if(matrix[i+1][j] == "O" or matrix[i+1][j] == "G"):  #checks is the following state is a open or goal state
+                    if(closed.count([i+1,j]) == 0 and fringe.count([i+1,j]) == 0): #checks if the following state isn't already closed or in the fringe
                         fringe.append([i+1,j])
-            if((i - 1) >=0 and (i - 1) < m):
-                if(matrix[i-1][j] == "O" or matrix[i-1][j] == "E" ):
+            if((i - 1) >=0 and (i - 1) < dim):
+                if(matrix[i-1][j] == "O" or matrix[i-1][j] == "G" ):
                     if(closed.count([i-1,j]) == 0 and fringe.count([i-1,j]) == 0):
                         fringe.append([i-1,j])
-            if((j + 1) >=0 and (j + 1) < m):
-                if(matrix[i][j+1] == "O" or matrix[i][j+1] == "E"):
+            if((j + 1) >=0 and (j + 1) < dim):
+                if(matrix[i][j+1] == "O" or matrix[i][j+1] == "G"):
                     if(closed.count([i,j+1]) == 0 and fringe.count([i,j+1]) == 0):
                         fringe.append([i,j+1])  
-            if((j - 1) >= 0 and (j - 1) < m):
-                if(matrix[i][j-1] == "O" or matrix[i][j-1] == "E"):
+            if((j - 1) >= 0 and (j - 1) < dim):
+                if(matrix[i][j-1] == "O" or matrix[i][j-1] == "G"):
                     if(closed.count([i,j-1]) == 0 and fringe.count([i,j-1]) == 0):
                         fringe.append([i,j-1])
-            closed.append(current) 
+            closed.append(current)  #puts current state in closed after generating valid children
     return False 
      
             
-m = int(input("Enter Size "))
-R = int(input("Enter Probability"))
+dim = int(input("Enter Size dim: "))
+p = float(input("Enter Probability (0 < p < 1) p:"))
 
 print()
-matrix = create_maze(m, R)
-print_maze(matrix, m)
-
-print(DFS(matrix, [0,0], [m-1,m-1], m))
+maze = create_maze(dim, p)
+print_maze(maze, dim)
+print("DFS which determines if G can be reached from S")
+print(DFS(maze, [0,0], [dim-1,dim-1], dim))
